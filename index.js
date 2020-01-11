@@ -16,10 +16,21 @@ MongoClient.connect(connectionUrl, { useNewUrlParser: true }, (err, client) => {
 
 
 app.get('/', function (req, res) {
-  db.collection('users').insertOne({
-    name: 'Vinicius',
-    age: 24
-  })
+  db.collection('tasks').insertMany([
+    {
+      description: 'First task',
+      completed: false
+    },
+    {
+      description: 'Second task',
+      completed: false
+    },
+    {
+      description: 'Third task',
+      completed: true
+    },
+
+  ])
 
   res.send('Hello World!');
 });
