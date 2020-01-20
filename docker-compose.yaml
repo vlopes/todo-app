@@ -14,7 +14,10 @@ services:
       - mongodb
     ports:
       - '3000:3000'
-
+    entrypoint:
+      - npm
+      - run
+      - dev
   mongodb:
     image: 'mongo'
     ports:
