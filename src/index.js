@@ -14,10 +14,36 @@ app.post('/users', (req, res) => {
 
   newUser.save()
     .then((user) => {
-      res.send(user)
+      return res.send(user)
     })
     .catch((err) => {
-      res.status(400).send(err)
+      return res.status(400).send(err)
+    })
+})
+
+app.get('/users', (req, res) => {
+  User.find({})
+    .then((users) => {
+      return res.send(users)
+    })
+    .catch((err) => {
+      return res.status(400).send(err)
+    })
+})
+
+app.get('/users/:id', (req, res) => {
+  const id = req.params.id
+
+  User.findById(id)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send('User not found.')
+      }
+
+      return res.send(user)
+    })
+    .catch((err) => {
+      return res.status(400).send(err)
     })
 })
 
@@ -26,10 +52,10 @@ app.post('/tasks', (req, res) => {
 
   newTask.save()
     .then((task) => {
-      res.send(task)
+      return res.send(task)
     })
     .catch((err) => {
-      res.status(400).send(err)
+      return res.status(400).send(err)
     })
 })
 
