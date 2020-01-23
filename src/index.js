@@ -59,6 +59,32 @@ app.post('/tasks', (req, res) => {
     })
 })
 
+app.get('/tasks', (req, res) => {
+  Task.find({})
+    .then((task) => {
+      return res.send(task)
+    })
+    .catch((err) => {
+      return res.status(400).send(err)
+    })
+})
+
+app.get('/tasks/:id', (req, res) => {
+  const id = req.params.id
+
+  Task.findById(id)
+    .then((task) => {
+      if (!task) {
+        return res.status(404).send('Task not found.')
+      }
+
+      return res.send(task)
+    })
+    .catch((err) => {
+      return res.status(400).send(err)
+    })
+})
+
 app.listen(PORT, function () {
   console.log(`Example app listening on port ${PORT}!`);
 });
