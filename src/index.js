@@ -46,6 +46,36 @@ app.get('/users/:id', async (req, res) => {
   }
 })
 
+app.patch('/users/:id', async (req, res) => {
+  const allowUpdate = ['name', 'email', 'password', 'age']
+  const udpates = Object.keys(req.body)
+  const isValidOperation = udpates.every((update) => allowUpdate.includes(update))
+
+  if (!isValidOperation) {
+    return res.status(400).send({
+      error: 'Invalid update'
+    })
+  }
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    )
+
+    console.log(req.body);
+
+    if (!user) {
+      return res.status(404).send({})
+    }
+
+    return res.send(user)
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+})
+
 app.post('/tasks', async (req, res) => {
   const newTask = new Task(req.body)
 
