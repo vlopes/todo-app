@@ -17,7 +17,7 @@ app.post('/users', async (req, res) => {
 
     return res.send(user)
   } catch (err) {
-    return res.status(400).send(err)
+    return res.status(500).send(err)
   }
 })
 
@@ -26,7 +26,7 @@ app.get('/users', async (req, res) => {
     const users = await User.find({})
     return res.send(users)
   } catch (err) {
-    return res.status(400).send(err)
+    return res.status(500).send(err)
   }
 })
 
@@ -42,7 +42,7 @@ app.get('/users/:id', async (req, res) => {
 
     return res.send(user)
   } catch (err) {
-    return res.status(400).send(err)
+    return res.status(500).send(err)
   }
 })
 
@@ -74,6 +74,20 @@ app.patch('/users/:id', async (req, res) => {
   }
 })
 
+app.delete('/users/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id)
+
+    if (!user) {
+      return res.status(404).send()
+    }
+
+    return res.send(user)
+  } catch (error) {
+    return res.status(500).send()
+  }
+})
+
 app.post('/tasks', async (req, res) => {
   const newTask = new Task(req.body)
 
@@ -91,7 +105,7 @@ app.get('/tasks', async (req, res) => {
     const tasks = await Task.find({})
     return res.send(tasks)
   } catch (error) {
-    return res.status(400).send(error)
+    return res.status(500).send(error)
   }
 })
 
@@ -107,7 +121,7 @@ app.get('/tasks/:id', async (req, res) => {
 
     return res.send(task)
   } catch (error) {
-    return res.status(400).send(err)
+    return res.status(500).send(err)
   }
 })
 
@@ -136,6 +150,20 @@ app.patch('/tasks/:id', async (req, res) => {
     return res.send(task)
   } catch (error) {
     return res.status(500).send(error)
+  }
+})
+
+app.delete('/tasks/:id', async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id)
+
+    if (!task) {
+      return res.status(404).send()
+    }
+
+    return res.send(task)
+  } catch (error) {
+    return res.status(500).send()
   }
 })
 
