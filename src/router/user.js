@@ -1,9 +1,10 @@
 const { Router } = require('express')
 const User = require('../models/user')
+const authMiddleware = require('../middleware/auth')
 
 const router = new Router()
 
-router.post('/users', async (req, res) => {
+router.post('/users', authMiddleware, async (req, res) => {
   const newUser = new User(req.body)
 
   try {
@@ -17,14 +18,18 @@ router.post('/users', async (req, res) => {
   }
 })
 
-router.get('/users', async (req, res) => {
-  try {
-    const users = await User.find({})
+// router.get('/users', authMiddleware, async (req, res) => {
+//   try {
+//     const users = await User.find({})
 
-    return res.send(users)
-  } catch (err) {
-    return res.status(500).send(err)
-  }
+//     return res.send(users)
+//   } catch (err) {
+//     return res.status(500).send(err)
+//   }
+// })
+
+router.get('/users/profile', authMiddleware, async (req, res) => {
+  return res.send(req.user)
 })
 
 router.get('/users/:id', async (req, res) => {
