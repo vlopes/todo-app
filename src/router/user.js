@@ -48,7 +48,7 @@ router.get('/users/:id', async (req, res) => {
   }
 })
 
-router.patch('/users/:id', async (req, res) => {
+router.patch('/users/:id', authMiddleware, async (req, res) => {
   const allowUpdate = ['name', 'email', 'password', 'age']
   const udpates = Object.keys(req.body)
   const isValidOperation = udpates.every((update) => allowUpdate.includes(update))
@@ -75,7 +75,7 @@ router.patch('/users/:id', async (req, res) => {
   }
 })
 
-router.delete('/users/:id', async (req, res) => {
+router.delete('/users/:id', authMiddleware, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id)
 
@@ -99,7 +99,30 @@ router.post('/users/login', async (req, res) => {
   } catch (error) {
     return res.status(400).send(error)
   }
+})
 
+router.post('/users/logout', authMiddleware, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token != req.token
+    })
+    await req.user.save()
+
+    return res.send('Logged out.')
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+})
+
+router.post('/users/logoutAll', authMiddleware, async (req, res) => {
+  try {
+    req.user.tokens = []
+    await req.user.save()
+
+    return res.send('Logged out from all devices.')
+  } catch (error) {
+    return res.status(500).send(error)
+  }
 })
 
 module.exports = router
