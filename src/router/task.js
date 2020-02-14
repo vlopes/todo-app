@@ -21,7 +21,18 @@ router.post('/tasks', authMiddleware, async (req, res) => {
 
 router.get('/tasks', authMiddleware, async (req, res) => {
   try {
-    const tasks = await Task.find({ owner: req.user._id })
+    const match = {}
+
+    if (req.query.completed) {
+      match.completed = req.query.completed === 'true'
+    }
+
+    await req.user.populate({
+      path: 'tasks',
+      match
+    }).execPopulate()
+
+    const tasks = req.user.tasks
 
     return res.send(tasks)
   } catch (error) {
