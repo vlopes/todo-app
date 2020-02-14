@@ -18,37 +18,11 @@ router.post('/users', async (req, res) => {
   }
 })
 
-// router.get('/users', async (req, res) => {
-//   try {
-//     const users = await User.find({})
-
-//     return res.send(users)
-//   } catch (err) {
-//     return res.status(500).send(err)
-//   }
-// })
-
 router.get('/users/profile', authMiddleware, async (req, res) => {
   return res.send(req.user)
 })
 
-router.get('/users/:id', async (req, res) => {
-  const id = req.params.id
-
-  try {
-    const user = await User.findById(id)
-
-    if (!user) {
-      return res.status(404).send('User not found.')
-    }
-
-    return res.send(user)
-  } catch (err) {
-    return res.status(500).send(err)
-  }
-})
-
-router.patch('/users/:id', authMiddleware, async (req, res) => {
+router.patch('/users/me', authMiddleware, async (req, res) => {
   const allowUpdate = ['name', 'email', 'password', 'age']
   const udpates = Object.keys(req.body)
   const isValidOperation = udpates.every((update) => allowUpdate.includes(update))
@@ -60,30 +34,19 @@ router.patch('/users/:id', authMiddleware, async (req, res) => {
   }
 
   try {
-    const user = await User.findById(req.params.id)
+    udpates.forEach((update) => req.user[update] = req.body[update])
+    await req.user.save()
 
-    if (!user) {
-      return res.status(404).send({})
-    }
-
-    udpates.forEach((update) => user[update] = req.body[update])
-    await user.save()
-
-    return res.send(user)
+    return res.send(req.user)
   } catch (error) {
     return res.status(500).send(error)
   }
 })
 
-router.delete('/users/:id', authMiddleware, async (req, res) => {
+router.delete('/users/me', authMiddleware, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id)
-
-    if (!user) {
-      return res.status(404).send()
-    }
-
-    return res.send(user)
+    await req.user.remove()
+    return res.send(req.user)
   } catch (error) {
     return res.status(500).send()
   }
