@@ -22,9 +22,15 @@ router.post('/tasks', authMiddleware, async (req, res) => {
 router.get('/tasks', authMiddleware, async (req, res) => {
   try {
     const match = {}
+    const sort = {}
 
     if (req.query.completed) {
       match.completed = req.query.completed === 'true'
+    }
+
+    if (req.query.sortBy) {
+      const parts = req.query.sortBy.split(':')
+      sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
     }
 
     const limit = parseInt(req.query.limit || 10)
@@ -35,7 +41,8 @@ router.get('/tasks', authMiddleware, async (req, res) => {
       match,
       options: {
         limit,
-        skip
+        skip,
+        sort
       }
     }).execPopulate()
 
