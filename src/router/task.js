@@ -27,9 +27,16 @@ router.get('/tasks', authMiddleware, async (req, res) => {
       match.completed = req.query.completed === 'true'
     }
 
+    const limit = parseInt(req.query.limit || 10)
+    const skip = parseInt(req.query.skip)
+
     await req.user.populate({
       path: 'tasks',
-      match
+      match,
+      options: {
+        limit,
+        skip
+      }
     }).execPopulate()
 
     const tasks = req.user.tasks
