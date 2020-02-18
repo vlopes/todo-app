@@ -1,6 +1,8 @@
 const { Router } = require('express')
 const User = require('../models/user')
 const authMiddleware = require('../middleware/auth')
+const multer = require('multer')
+const upload = multer({ dest: '/app/src/avatars/' })
 
 const router = new Router()
 
@@ -86,6 +88,12 @@ router.post('/users/logoutAll', authMiddleware, async (req, res) => {
   } catch (error) {
     return res.status(500).send(error)
   }
+})
+
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+  console.log(req);
+
+  return res.send()
 })
 
 module.exports = router
