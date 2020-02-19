@@ -2,7 +2,19 @@ const { Router } = require('express')
 const User = require('../models/user')
 const authMiddleware = require('../middleware/auth')
 const multer = require('multer')
-const upload = multer({ dest: '/app/src/avatars/' })
+const upload = multer({
+  dest: '/app/src/avatars/',
+  limits: {
+    fileSize: 1000000
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)/)) {
+      return cb(new Error('File in wrong format, only accept jpg, jpeg or png files.'))
+    }
+
+    return cb(undefined, true)
+  }
+})
 
 const router = new Router()
 

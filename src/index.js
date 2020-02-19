@@ -10,6 +10,15 @@ app.use(express.json())
 app.use(taskRouter)
 app.use(userRouter)
 
+app.use((error, req, res, next) => {
+  console.log(error);
+
+  return res.status(500).send({
+    message: error.message,
+    error
+  })
+})
+
 app.listen(PORT, function () {
   console.log(`Example app listening on port ${PORT}!`);
 });
