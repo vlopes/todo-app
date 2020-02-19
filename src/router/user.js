@@ -119,4 +119,19 @@ router.delete('/users/me/avatar', authMiddleware, async (req, res) => {
   return res.send()
 })
 
+router.get('/users/:id/avatar', async (req, res) => {
+  try {
+     const user = await User.findById(req.params.id)
+
+     if (!user || !user.avatar) {
+       throw Error('No user avatar found')
+     }
+
+     res.set('Content-Type', 'image/png')
+     return res.send(user.avatar)
+  } catch (error) {
+    res.send(404).send({ error: error.message })
+  }
+})
+
 module.exports = router
